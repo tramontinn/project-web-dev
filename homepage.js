@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import background from './assets/backgroud.jpg'
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from './firebase';
 
-const Homepage = () => {
-    const [username, setUsername] = useState('');
+const Homepage = ({ setUser }) => {
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
   
     const handleLogin = () => {
-      // Lógica para processar o login
-      console.log('Username:', username);
-      console.log('Password:', password);
-      // Adicione sua lógica de autenticação aqui
+    const auth = getAuth();
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+
+          const user = userCredential.user;
+          
+          console.log(user)
+          setUser(user)
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        });
     };
   
 return (
@@ -19,8 +30,8 @@ return (
                 <Text style={styles.title}>FTK Doações</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Username"
-                        onChangeText={(text) => setUsername(text)}
+                        placeholder="Email"
+                        onChangeText={(text) => setEmail(text)}
                     />
                     <TextInput
                         style={styles.input}
