@@ -24,7 +24,7 @@ function ListSuppliers() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.heading}>ListSuppliers</Text>
+            <Text style={styles.heading}>Campanhas</Text>
             {ListSuppliers.map(fornecedor => (
                 <List.Accordion
                     key={fornecedor.id}

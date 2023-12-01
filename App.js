@@ -5,12 +5,14 @@ import MarketItemsCRUD from './MarketItemsCRUD';
 import ListSuppliers from './ListSuppliers';
 import CrudDonators from './CrudDonators';
 import ListDonators from './ListDonators';
+import HomePage from './homepage';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
+        <Route path='/homepage' element={<HomePage/>} />
         <Route path="/MarketItemsCRUD" element={<MarketItemsCRUD />} />
         <Route path="/ListSuppliers" element={<ListSuppliers />} />
         <Route path="/CrudDonators" element={<CrudDonators />} />

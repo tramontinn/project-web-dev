@@ -12,26 +12,23 @@ function LoginPage() {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Sucesso no login
         const user = userCredential.user;
         console.log(user);
-        navigate('/homepage'); // Substitua pelo caminho da sua página de CRUD
+        navigate('/homepage'); 
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        // Adicione aqui o tratamento de erros de login
         console.error(errorCode, errorMessage);
       });
   };
 
-  // Substitua 'caminho-para-sua-imagem-de-fundo' pelo caminho correto da imagem
-  const background = { uri: '/assets/backgroud.jpg' };
+  const background = require('./assets/backgroud.jpg')
 
   return (
     <ImageBackground source={background} style={styles.background}>
       <View style={styles.container}>
-        <Text style={styles.title}>FTK Doações</Text>
+        <Text style={styles.title}>Doações</Text>
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -56,7 +53,7 @@ function LoginPage() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'cover', // or 'stretch'
+    resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -69,23 +66,23 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: 'white', // Text color
+    color: '#007AFF', 
   },
   input: {
     width: '80%',
-    backgroundColor: 'white', // Input background color
+    backgroundColor: 'white', 
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
   },
   button: {
     width: '80%',
-    backgroundColor: '#007AFF', // Button background color
+    backgroundColor: '#007AFF', 
     padding: 10,
     borderRadius: 5,
   },
   buttonText: {
-    color: 'white', // Button text color
+    color: 'white', 
     textAlign: 'center',
     fontWeight: 'bold',
   },
