@@ -19,7 +19,7 @@ function HomePage() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bem-vindo à sua página principal</Text>
+      <Text style={styles.title}>Selecione uma opção</Text>
       <View style={styles.buttonContainer}>
         <Button mode="contained" onPress={navigateToList}>
           Doadores
