@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { firestore } from './firebase'; // Verifique se este caminho está correto
+import { View, Text, StyleSheet } from 'react-native';
+import { List } from 'react-native-paper'; // Import List component from React Native Paper
+import { firestore } from './firebase'; // Verify if this path is correct
 import { collection, getDocs } from 'firebase/firestore';
 
 function ListSuppliers() {
@@ -21,30 +23,57 @@ function ListSuppliers() {
     }, []);
 
     return (
-        <div>
-            <h1>ListSuppliers</h1>
-            <ul>
-                {ListSuppliers.map(fornecedor => (
-                    <li key={fornecedor.id}>
-                        <h2>{fornecedor.name}</h2>
-                        <p>Endereço: {fornecedor.location?.address}</p>
-                        <p>Cidade: {fornecedor.location?.city}</p>
-                        <h3>Itens:</h3>
-                        <ul>
-                            {fornecedor.items?.map((item, index) => (
-                                <li key={index}>
-                                    <span>Item: {item.itemName}<br />
-                                    <li>Quantidade: {item.quantity}</li></span>
-                                    <br /><br />
-                                </li>
-                            ))}
-                        </ul>
-                    </li>
-                ))}
-            </ul>
-            <br /><br />
-        </div>
+        <View style={styles.container}>
+            <Text style={styles.heading}>ListSuppliers</Text>
+            {ListSuppliers.map(fornecedor => (
+                <List.Accordion
+                    key={fornecedor.id}
+                    title={fornecedor.name}
+                    style={styles.supplierItem}
+                    titleStyle={styles.supplierName}
+                >
+                    <List.Item title={`Endereço: ${fornecedor.location?.address}`} />
+                    <List.Item title={`Cidade: ${fornecedor.location?.city}`} />
+                    <List.Section style={styles.itemList}>
+                        {fornecedor.items?.map((item, index) => (
+                            <List.Item
+                                key={index}
+                                title={`Item: ${item.itemName}\nQuantidade: ${item.quantity}`}
+                                titleStyle={styles.item}
+                            />
+                        ))}
+                    </List.Section>
+                </List.Accordion>
+            ))}
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+    },
+    heading: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    supplierItem: {
+        marginBottom: 30,
+        borderRadius: 5,
+    },
+    supplierName: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    itemList: {
+        marginTop: 10,
+    },
+    item: {
+        fontSize: 16,
+    },
+});
 
 export default ListSuppliers;

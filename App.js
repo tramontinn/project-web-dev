@@ -1,5 +1,6 @@
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Homepage from './homepage';
+import LoginPage from './LoginPage';
 import MarketItemsCRUD from './MarketItemsCRUD';
 import ListSuppliers from './ListSuppliers';
 import CrudDonators from './CrudDonators';
@@ -9,7 +10,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route exact path="/" element={<Homepage />} />
+        <Route path="/" element={<LoginPage />} />
         <Route path="/MarketItemsCRUD" element={<MarketItemsCRUD />} />
         <Route path="/ListSuppliers" element={<ListSuppliers />} />
         <Route path="/CrudDonators" element={<CrudDonators />} />

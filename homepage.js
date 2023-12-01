@@ -1,60 +1,50 @@
-import React, { useState } from 'react';
-import { ImageBackground, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigate } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Button } from 'react-native-paper'; // Importe o Button do React Native Paper
 
-function Homepage() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function HomePage() {
+  const navigation = useNavigation();
 
-  const handleLogin = () => {
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Sucesso no login
-        const user = userCredential.user;
-        console.log(user);
-        navigate('/MarketItemsCRUD'); // Substitua pelo caminho da sua página de CRUD
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // Adicione aqui o tratamento de erros de login
-        console.error(errorCode, errorMessage);
-      });
+  const navigateToList = () => {
+    navigation.navigate('ListPage'); // Nomeie a página de listagem como 'ListPage' no React Navigation
   };
 
-  // Substitua 'caminho-para-sua-imagem-de-fundo' pelo caminho correto da imagem
-  const background = { uri: '/assets/backgroud.jpg' };
+  const navigateToCrud = () => {
+    navigation.navigate('CrudPage'); // Nomeie a página de CRUD como 'CrudPage' no React Navigation
+  };
 
   return (
-    <ImageBackground source={background} style={styles.background}>
-      <View style={styles.container}>
-        <Text style={styles.title}>FTK Doações</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          onChangeText={setEmail}
-          value={email}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry={true}
-          onChangeText={setPassword}
-          value={password}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-      </View> 
-    </ImageBackground>
+    <View style={styles.container}>
+      <Text style={styles.title}>Bem-vindo à sua página principal</Text>
+      <View style={styles.buttonContainer}>
+        <Button mode="contained" onPress={navigateToList}>
+          Ver Lista
+        </Button>
+        <Button mode="contained" onPress={navigateToCrud}>
+          CRUD
+        </Button>
+      </View>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  // ... (as mesmas definições de estilo que você já forneceu)
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '80%',
+  },
 });
 
-export default Homepage;
+export default HomePage;

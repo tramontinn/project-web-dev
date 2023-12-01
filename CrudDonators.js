@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { View, ScrollView, Text } from 'react-native';
+import { Button, TextInput, Menu, Provider as PaperProvider } from 'react-native-paper';
 import { firestore } from './firebase';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 
@@ -7,6 +9,7 @@ function CrudDonators() {
     const [selectedDoadorId, setSelectedDoadorId] = useState('');
     const [doadorData, setDoadorData] = useState({ name: '', items: [] });
     const [newItem, setNewItem] = useState({ itemName: '', quantity: 0 });
+    const [menuVisible, setMenuVisible] = useState(false);
 
     useEffect(() => {
         fetchDoadores();
@@ -16,27 +19,23 @@ function CrudDonators() {
         const doadoresSnapshot = await getDocs(collection(firestore, 'donators'));
         const doadoresList = doadoresSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setDoadores(doadoresList);
-        if (selectedDoadorId) {
-            const selectedDoador = doadoresList.find(d => d.id === selectedDoadorId);
-            if (selectedDoador) {
-                setDoadorData(selectedDoador);
-            }
-        }
     };
 
-    const handleSelectDoador = (id) => {
+    const handleSelectDoador = (id, name) => {
         setSelectedDoadorId(id);
         const selectedDoador = doadores.find(d => d.id === id);
         if (selectedDoador) {
             setDoadorData({ ...selectedDoador });
         }
+        setMenuVisible(false);
     };
 
-    const handleNewItemChange = (e) => {
-        setNewItem({ ...newItem, [e.target.name]: e.target.value });
+    const handleNewItemChange = (name, value) => {
+        setNewItem({ ...newItem, [name]: value });
     };
     
     const addItem = async () => {
+        console.log("Adicionando item:", newItem);
         const doadorRef = doc(firestore, 'donators', selectedDoadorId);
         // Verifica se items existe e é um array, senão usa um array vazio
         const currentItems = doadorData.items ? doadorData.items : [];
@@ -58,32 +57,47 @@ function CrudDonators() {
     };
 
     return (
-        <div>
-            <h1>CRUD Doadores</h1>
-            <div>
-                <select onChange={(e) => handleSelectDoador(e.target.value)}>
-                    <option value="">Selecione um Doador</option>
-                    {doadores.map(doador => (
-                        <option key={doador.id} value={doador.id}>{doador.name}</option>
-                    ))}
-                </select>
-                <div>
-                    <input type="text" name="itemName" placeholder="Nome do Item" value={newItem.itemName} onChange={handleNewItemChange} />
-                    <input type="number" name="quantity" placeholder="Quantidade" value={newItem.quantity} onChange={handleNewItemChange} />
-                    <button onClick={addItem}>Adicionar Item</button>
-                </div>
-            </div>
-            {selectedDoadorId && doadorData.items && (
-                <ul>
-                    {doadorData.items.map((item, index) => (
-                        <li key={index}>
-                            {item.itemName} - {item.quantity}
-                            <button onClick={() => deleteItem(index)}>Remover</button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
+        <PaperProvider>
+            <ScrollView style={{ flex: 1, padding: 10 }}>
+                <View>
+                    <Menu
+                        visible={menuVisible}
+                        onDismiss={() => setMenuVisible(false)}
+                        anchor={<Button onPress={() => setMenuVisible(true)}>Selecionar Doador</Button>}>
+                        {doadores.map(doador => (
+                            <Menu.Item
+                                key={doador.id}
+                                title={doador.name}
+                                onPress={() => handleSelectDoador(doador.id, doador.name)}
+                            />
+                        ))}
+                    </Menu>
+
+                    <TextInput
+                        label="Nome do Item"
+                        value={newItem.itemName}
+                        onChangeText={text => handleNewItemChange('itemName', text)}
+                    />
+                    <TextInput
+                        label="Quantidade"
+                        value={String(newItem.quantity)}
+                        onChangeText={text => handleNewItemChange('quantity', parseInt(text))}
+                        keyboardType="numeric"
+                    />
+                    <Button mode="contained" onPress={addItem}>Adicionar Item</Button>
+
+                    {/* Lista de itens */}
+                    {selectedDoadorId && doadorData.items && (
+                        doadorData.items.map((item, index) => (
+                            <View key={index} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Text>{item.itemName} - {item.quantity}</Text>
+                                <Button onPress={() => deleteItem(index)}>Remover</Button>
+                            </View>
+                        ))
+                    )}
+                </View>
+            </ScrollView>
+        </PaperProvider>
     );
 }
 

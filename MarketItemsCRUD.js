@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { View, ScrollView } from 'react-native';
+import { Button, TextInput, Menu, Provider as PaperProvider } from 'react-native-paper';
 import { firestore } from './firebase';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 
@@ -8,6 +10,10 @@ function MarketItemsCRUD() {
   const [selectedDonator, setSelectedDonator] = useState(null);
   const [selectedInstitution, setSelectedInstitution] = useState(null);
   const [newItem, setNewItem] = useState({ itemName: '', quantity: 0 });
+  // Estados adicionais para controle do menu
+  const [donatorMenuVisible, setDonatorMenuVisible] = useState(false);
+  const [institutionMenuVisible, setInstitutionMenuVisible] = useState(false);
+  
 
   useEffect(() => {
     const fetchDonators = async () => {
@@ -64,37 +70,62 @@ function MarketItemsCRUD() {
   };
 
   return (
-    <div>
-      <h1>Transferência de Itens</h1>
-      <div>
-        <select onChange={(e) => setSelectedDonator(donators.find(d => d.id === e.target.value))}>
-          <option value="">Selecione um Doador</option>
-          {donators.map(donator => (
-            <option key={donator.id} value={donator.id}>{donator.name}</option>
-          ))}
-        </select>
-        <select onChange={(e) => setSelectedInstitution(institutions.find(inst => inst.id === e.target.value))}>
-          <option value="">Selecione uma Instituição</option>
-          {institutions.map(institution => (
-            <option key={institution.id} value={institution.id}>{institution.name}</option>
-          ))}
-        </select>
-        <div>
-          <input type="text" name="itemName" placeholder="Nome do Item" value={newItem.itemName} onChange={handleNewItemChange} />
-          <input type="number" name="quantity" placeholder="Quantidade" value={newItem.quantity} onChange={handleNewItemChange} />
-          <button onClick={transferItem}>Transferir Item</button>
-        </div>
-      </div>
-      {selectedDonator && (
-        <ul>
-          {selectedDonator.items.map((item, index) => (
-            <li key={index}>
-              {item.itemName} - {item.quantity}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <PaperProvider>
+      <ScrollView style={{ flex: 1, padding: 10 }}>
+        <View>
+          <Menu
+            visible={donatorMenuVisible}
+            onDismiss={() => setDonatorMenuVisible(false)}
+            anchor={
+              <Button onPress={() => setDonatorMenuVisible(true)}>Selecionar Doador</Button>
+            }>
+            {donators.map((donator) => (
+              <Menu.Item
+                key={donator.id}
+                title={donator.name}
+                onPress={() => {
+                  setSelectedDonator(donator);
+                  setDonatorMenuVisible(false);
+                }}
+              />
+            ))}
+          </Menu>
+
+          <Menu
+            visible={institutionMenuVisible}
+            onDismiss={() => setInstitutionMenuVisible(false)}
+            anchor={
+              <Button onPress={() => setInstitutionMenuVisible(true)}>Selecionar Instituição</Button>
+            }>
+            {institutions.map((institution) => (
+              <Menu.Item
+                key={institution.id}
+                title={institution.name}
+                onPress={() => {
+                  setSelectedInstitution(institution);
+                  setInstitutionMenuVisible(false);
+                }}
+              />
+            ))}
+          </Menu>
+
+          <TextInput
+            label="Nome do Item"
+            value={newItem.itemName}
+            onChangeText={text => setNewItem({ ...newItem, itemName: text })}
+          />
+          <TextInput
+            label="Quantidade"
+            value={String(newItem.quantity)}
+            onChangeText={text => setNewItem({ ...newItem, quantity: parseInt(text) })}
+            keyboardType="numeric"
+          />
+          <Button mode="contained" onPress={transferItem}>
+            Transferir Item
+          </Button>
+        </View>
+      </ScrollView>
+    </PaperProvider>
   );
 }
 
